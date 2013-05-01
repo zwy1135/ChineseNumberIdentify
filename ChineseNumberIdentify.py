@@ -137,9 +137,10 @@ class net:
         从存档中加载训练好的网络
         '''
         print 'loading'
+        save_path ='./save/'
         filename = str(self.input_num)+'-'+str(self.hide_node_num)+'-'+str(self.output_num)+'new.cPickle'
-        if filename in os.listdir('./save'):
-            with open(filename,'rb') as f:
+        if filename in os.listdir('./save/'):
+            with open(save_path+filename,'rb') as f:
                 self.network = cPickle.load(f)
         print 'done'
         
@@ -152,7 +153,7 @@ def main():
     hide_node_num = 100
     filename = str(input_num)+'-'+str(hide_node_num)+'-'+str(output_num)+'new.cPickle'
     net1 = net(input_num,hide_node_num,output_num)
-    if filename in os.listdir('./'):
+    if filename in os.listdir('./save/'):
         net1.load()
     else:
         samples = get_train_samples(input_num,output_num)
