@@ -23,9 +23,6 @@ def get_train_samples(input_num,output_num):
         im = Image.open(file)
         im = im.convert('L')
         im = im.resize((t,t),Image.BILINEAR)
-        #im.point(lambda x:255 if x==255 else 0)
-        #im = im.convert('1')
-        #im.save('./buf/'+n)
         buf = np.array(im).reshape(input_num,1)
         buf = buf<200
         buf = tuple(buf)
@@ -37,8 +34,6 @@ def get_train_samples(input_num,output_num):
         buf2 = tuple(buf2)
         samples.addSample(buf,buf2)
         for i in range(100):
-            # if not i%100:
-                # print n,'  ',i
             buf3 = list(buf)
             for j in range(len(buf)/20):
                 buf3[np.random.randint(len(buf))] = bool(np.random.randint(2))
@@ -59,8 +54,6 @@ def get_test_samples(input_num):
         im = Image.open(file)
         im = im.convert('L')
         im = im.resize((t,t),Image.BILINEAR)
-        #im.point(lambda x:255 if x==255 else 0)
-        #im = im.convert('1')
         buf = np.array(im).reshape(input_num,1)
         buf = buf<200
         buf = tuple(buf)
@@ -81,21 +74,19 @@ class net:
         self.input_num = input_num
         self.hide_node_num = hide_node_num
         self.output_num = output_num
-        self.network = buildNetwork(input_num,hide_node_num,output_num,bias=True)
+        self.network = buildNetwork(input_num,hide_node_num,output_num,bias=True)   #响应函数和层数可在此调
         
     def train(self,samples,epsilon):
         '''
         训练函数
         '''
         print 'Train start.'
-        trainer = BackpropTrainer(self.network,samples)
+        trainer = BackpropTrainer(self.network,samples)             #学习率可在此调
         e = 100
         n=0
-        #e=trainer.trainUntilConvergence()
         while e>epsilon:
             e=trainer.train()
             n+=1
-            #if not n%100:
             print n,' done,e=',e
             if not n%10:
                 self.save()
@@ -146,11 +137,14 @@ class net:
         
         
 def main():
+    '''
+    主函数，定义程序运行过程
+    '''
     start=datetime.datetime.now()
     output_num = 10
     epsilon = 0.01
     input_num=20*20
-    hide_node_num = 100
+    hide_node_num = 200
     filename = str(input_num)+'-'+str(hide_node_num)+'-'+str(output_num)+'new.cPickle'
     net1 = net(input_num,hide_node_num,output_num)
     if filename in os.listdir('./save/'):
