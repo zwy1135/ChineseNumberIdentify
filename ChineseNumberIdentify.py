@@ -66,7 +66,7 @@ def get_test_samples(input_num):
 
 
     
-class net:
+class net(object):
     '''
     网络的定义
     '''
@@ -161,4 +161,3 @@ def main():
     print('Time ',end-start)
     
 main()
-        
