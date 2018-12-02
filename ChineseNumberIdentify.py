@@ -5,15 +5,18 @@ from pybrain.supervised.trainers import BackpropTrainer
 from pybrain.structure import TanhLayer
 
 import numpy as np
-import os,Image
+#import os,image as Image
+import os
+from PIL import Image
 import cPickle
+#import copy_reg, copy, pickle
 import datetime
 
 def get_train_samples(input_num,output_num):
     '''
     从new_samples文件夹中读图，根据输入数和输出数制作样本，每一原始样本加入随机噪音生成100个样本
     '''
-    print 'getsample start.'
+    print('getsample start.')
     sam_path='./new_samples'
     samples = SupervisedDataSet(input_num,output_num)
     nlist = os.listdir(sam_path)
@@ -44,7 +47,7 @@ def get_test_samples(input_num):
     '''
     从new_test文件夹读取测试数据
     '''
-    print 'Get test samples start.'
+    print('Get test samples start.')
     test_path='./new_test'
     samples = SupervisedDataSet(input_num,1)
     nlist = os.listdir(test_path)
@@ -63,7 +66,7 @@ def get_test_samples(input_num):
 
 
     
-class net:
+class net(object):
     '''
     网络的定义
     '''
@@ -80,32 +83,32 @@ class net:
         '''
         训练函数
         '''
-        print 'Train start.'
+        print('Train start.')
         trainer = BackpropTrainer(self.network,samples)             #学习率可在此调
         e = 100
         n=0
         while e>epsilon:
             e=trainer.train()
             n+=1
-            print n,' done,e=',e
+            print(n,' done,e=',e)
             if not n%10:
                 self.save()
             if n>=100:break
         self.save() 
-        print 'Train end.'
+        print('Train end.')
         return e
     
     def run(self,samples):
         '''
         测试
         '''
-        print 'Test start.'
+        print('Test start.')
         result = []
         for sample in samples['input']:
             buf = self.network.activate(sample)
             buf= list(buf)
             result.append(buf.index(max(buf)))
-        print 'Result ',result
+        print('Result ',result)
         result_path = './results/'
         filename = str(self.input_num)+'-'+str(self.hide_node_num)+'-'+str(self.output_num)+'new.txt'
         with open(result_path+filename,'w') as f:
@@ -116,24 +119,24 @@ class net:
         '''
         保存训练好的网络
         '''
-        print 'saving'
+        print('saving')
         save_path = './save/'
         filename = str(self.input_num)+'-'+str(self.hide_node_num)+'-'+str(self.output_num)+'new.cPickle'
         with open(save_path+filename,'wb') as f:
             cPickle.dump(self.network,f)
-        print 'done'
+        print('done')
             
     def load(self):
         '''
         从存档中加载训练好的网络
         '''
-        print 'loading'
+        print('loading')
         save_path ='./save/'
         filename = str(self.input_num)+'-'+str(self.hide_node_num)+'-'+str(self.output_num)+'new.cPickle'
         if filename in os.listdir('./save/'):
-            with open(save_path+filename,'rb') as f:
+            with open(save_path+filename,'r') as f:
                 self.network = cPickle.load(f)
-        print 'done'
+        print('done')
         
         
 def main():
@@ -155,7 +158,6 @@ def main():
         net1.save()
     net1.run(get_test_samples(input_num))
     end =datetime.datetime.now()
-    print 'Time ',end-start
+    print('Time ',end-start)
     
 main()
-        
